@@ -2,6 +2,8 @@ export interface IncomingTransaction {
   id: string
   dapp: string
   txnBase64?: string
+  wcTopic?: string
+  wcId?: number
   type: string
   from: string
   to: string
@@ -25,13 +27,12 @@ export function initInterceptor(onTxn: (t: IncomingTransaction) => void) {
       onTxn(e.data.payload)
     }
   }
-  console.log('Verity interceptor active on channel:', CHANNEL)
+  console.log('Verity interceptor active')
 }
 
 export function respondToTransaction(id: string, approved: boolean, txId?: string) {
   if (!bc) return
   bc.postMessage({ type: 'TXN_RESPONSE', payload: { id, approved, txId } })
-  console.log('Verity responded:', { id, approved, txId })
 }
 
 export function closeInterceptor() {

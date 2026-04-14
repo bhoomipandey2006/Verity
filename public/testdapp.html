@@ -3,395 +3,311 @@
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>AlgoYield — DeFi on Algorand</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/algosdk@2.7.0/dist/browser/algosdk.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#08090E;--s1:#0E0F17;--s2:#13141F;--s3:#1A1B28;--br:#1E2035;--br2:#282A45;--blue:#4F6EF7;--blue-dim:#0D1238;--blue-border:#1A2560;--text:#F0F2FF;--text2:#8890B0;--text3:#444860;--safe:#4ADE80;--safe-bg:#071510;--safe-br:#1A3A25;--danger:#E84040;--danger-bg:#0E0808;--danger-br:#2A1010;--gold:#E8B800;--gold-bg:#0E0C00;--gold-br:#2A2000;--mono:'IBM Plex Mono',monospace;--sans:'Inter',sans-serif}
-html,body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;-webkit-font-smoothing:antialiased}
+:root{--bg:#08090E;--s1:#0E0F17;--s2:#13141F;--br:#1E2035;--text:#F0F2FF;--text2:#8890B0;--text3:#444860;--blue:#4F6EF7;--blue-dim:#0D1238;--blue-br:#1A2560;--safe:#4ADE80;--safe-bg:#071510;--safe-br:#1A3A25;--danger:#E84040;--danger-bg:#0E0808;--danger-br:#2A1010;--gold:#E8B800;--gold-bg:#0E0C00;--gold-br:#2A2000}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-
-nav{display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:60px;border-bottom:1px solid var(--br);background:rgba(8,9,14,0.95);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100}
+nav{display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:60px;border-bottom:1px solid var(--br);background:rgba(8,9,14,0.95);position:sticky;top:0;z-index:100}
 .logo{display:flex;align-items:center;gap:8px}
 .logo-icon{width:28px;height:28px;border:1.5px solid var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center;background:var(--blue-dim)}
-.logo-icon-inner{width:10px;height:10px;border-radius:50%;background:var(--blue)}
-.logo-text{font-family:var(--mono);font-weight:700;font-size:15px;color:var(--text);letter-spacing:0.04em}
+.logo-dot{width:10px;height:10px;border-radius:50%;background:var(--blue)}
+.logo-text{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:15px;color:var(--text)}
 .logo-text span{color:var(--blue)}
 .nav-right{display:flex;align-items:center;gap:12px}
-.nav-badge{font-family:var(--mono);font-size:10px;color:var(--text3);border:1px solid var(--br);padding:4px 10px;border-radius:6px;letter-spacing:0.1em}
-.verity-badge{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--gold);border:1px solid var(--gold-br);background:var(--gold-bg);padding:4px 12px;border-radius:6px;letter-spacing:0.08em}
-.verity-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:pulse 2s ease-in-out infinite}
-
+.badge{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);border:1px solid var(--br);padding:4px 10px;border-radius:6px;letter-spacing:0.1em}
+.verity-badge{display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gold);border:1px solid var(--gold-br);background:var(--gold-bg);padding:4px 12px;border-radius:6px;letter-spacing:0.08em}
+.vdot{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:pulse 2s ease-in-out infinite}
 .ticker-wrap{border-bottom:1px solid var(--br);padding:10px 0;overflow:hidden;background:var(--s1)}
-.ticker{display:flex;gap:60px;white-space:nowrap;animation:ticker 25s linear infinite;font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.1em}
-
-.hero{max-width:1100px;margin:0 auto;padding:56px 48px 0;animation:fadeUp 0.5s ease forwards}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:6px;background:var(--blue-dim);border:1px solid var(--blue-border);border-radius:20px;padding:4px 14px;font-family:var(--mono);font-size:10px;color:var(--blue);margin-bottom:20px;letter-spacing:0.1em}
-.eyebrow-dot{width:5px;height:5px;border-radius:50%;background:var(--blue);animation:pulse 2s ease-in-out infinite}
+.ticker{display:flex;gap:60px;white-space:nowrap;animation:ticker 25s linear infinite;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:0.1em}
+.hero{max-width:1000px;margin:0 auto;padding:56px 48px 0}
 h1{font-size:48px;font-weight:700;line-height:1.1;letter-spacing:-0.03em;margin-bottom:16px}
 h1 em{color:var(--blue);font-style:normal}
-.subtitle{font-size:15px;color:var(--text2);line-height:1.75;max-width:520px;margin-bottom:48px}
-
-.setup-card{background:var(--s1);border:1px solid var(--br);border-radius:12px;padding:28px;max-width:520px;margin-bottom:48px}
-.setup-label{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:14px}
-.wallet-input{width:100%;background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:11px 14px;font-size:12px;color:var(--text);font-family:var(--mono);outline:none;transition:border-color 0.15s;margin-bottom:10px}
-.wallet-input:focus{border-color:var(--blue)}
-.wallet-input::placeholder{color:var(--text3)}
-.btn-connect{width:100%;background:var(--blue);color:#fff;border:none;padding:12px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--sans);transition:opacity 0.15s}
+.subtitle{font-size:15px;color:var(--text2);line-height:1.75;max-width:520px;margin-bottom:40px}
+.setup{background:var(--s1);border:1px solid var(--br);border-radius:12px;padding:28px;max-width:520px;margin-bottom:48px}
+.lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px}
+.addr-input{width:100%;background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:11px 14px;font-size:12px;color:var(--text);font-family:'IBM Plex Mono',monospace;outline:none;margin-bottom:10px}
+.addr-input:focus{border-color:var(--blue)}
+.addr-input::placeholder{color:var(--text3)}
+.btn-connect{width:100%;background:var(--blue);color:#fff;border:none;padding:12px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
 .btn-connect:hover{opacity:0.88}
-.connected-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--s2);border:1px solid var(--safe-br);border-radius:8px}
-.connected-dot{width:8px;height:8px;border-radius:50%;background:var(--safe);flex-shrink:0}
-.connected-addr{font-family:var(--mono);font-size:12px;color:var(--text2)}
-
-.section{max-width:1100px;margin:0 auto;padding:0 48px 64px}
-.section-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px}
-.section-title{font-size:22px;font-weight:600;color:var(--text);letter-spacing:-0.01em}
-.section-count{font-family:var(--mono);font-size:11px;color:var(--text3)}
-
-.txn-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-.txn-card{background:var(--s1);border:1px solid var(--br);border-radius:12px;padding:28px;transition:border-color 0.2s}
-.txn-card:hover{border-color:var(--br2)}
-.txn-card.safe{border-top:2px solid var(--safe)}
-.txn-card.danger{border-top:2px solid var(--danger)}
-.txn-badge{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;letter-spacing:0.08em;padding:3px 10px;border-radius:20px;margin-bottom:14px}
-.txn-badge.safe{background:var(--safe-bg);border:1px solid var(--safe-br);color:var(--safe)}
-.txn-badge.danger{background:var(--danger-bg);border:1px solid var(--danger-br);color:var(--danger)}
-.txn-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:8px;letter-spacing:-0.01em}
-.txn-desc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:20px}
-.txn-details{background:var(--s2);border-radius:8px;overflow:hidden;margin-bottom:20px}
-.txn-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--br);font-size:12px}
-.txn-row:last-child{border:none}
+.connected{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--s2);border:1px solid var(--safe-br);border-radius:8px}
+.cdot{width:8px;height:8px;border-radius:50%;background:var(--safe);flex-shrink:0}
+.caddr{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text2)}
+.section{max-width:1000px;margin:0 auto;padding:0 48px 64px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.card{background:var(--s1);border:1px solid var(--br);border-radius:12px;padding:28px}
+.card.safe{border-top:2px solid var(--safe)}
+.card.danger{border-top:2px solid var(--danger)}
+.cbadge{display:inline-flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.08em;padding:3px 10px;border-radius:20px;margin-bottom:14px}
+.cbadge.safe{background:var(--safe-bg);border:1px solid var(--safe-br);color:var(--safe)}
+.cbadge.danger{background:var(--danger-bg);border:1px solid var(--danger-br);color:var(--danger)}
+.ctitle{font-size:20px;font-weight:700;color:var(--text);margin-bottom:8px}
+.cdesc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:20px}
+.cdetails{background:var(--s2);border-radius:8px;overflow:hidden;margin-bottom:20px}
+.crow{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-bottom:1px solid var(--br);font-size:12px}
+.crow:last-child{border:none}
 .dk{color:var(--text3)}
-.dv{color:var(--text);font-family:var(--mono);font-size:11px}
+.dv{color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:11px}
 .dv.safe{color:var(--safe)}
 .dv.danger{color:var(--danger)}
-
-.btn-safe{width:100%;background:var(--safe-bg);color:var(--safe);border:1px solid var(--safe-br);padding:12px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--sans);transition:all 0.15s}
-.btn-safe:hover:not(:disabled){background:#0A2015;border-color:var(--safe)}
-.btn-safe:disabled,.btn-danger-btn:disabled{opacity:0.35;cursor:not-allowed}
-.btn-danger-btn{width:100%;background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-br);padding:12px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--sans);transition:all 0.15s}
-.btn-danger-btn:hover:not(:disabled){background:#180A0A;border-color:var(--danger)}
-
-.status{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:12px;display:none;font-family:var(--mono)}
+.btn-safe{width:100%;background:var(--safe-bg);color:var(--safe);border:1px solid var(--safe-br);padding:12px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+.btn-safe:hover:not(:disabled){background:#0A2015}
+.btn-safe:disabled,.btn-danger:disabled{opacity:0.35;cursor:not-allowed}
+.btn-danger{width:100%;background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-br);padding:12px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+.btn-danger:hover:not(:disabled){background:#180A0A}
+.status{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:12px;display:none;font-family:'IBM Plex Mono',monospace}
 .status.show{display:block}
-.status.info{background:var(--blue-dim);border:1px solid var(--blue-border);color:var(--blue)}
-.status.success{background:var(--safe-bg);border:1px solid var(--safe-br);color:var(--safe)}
+.status.info{background:var(--blue-dim);border:1px solid var(--blue-br);color:var(--blue)}
 .status.error{background:var(--danger-bg);border:1px solid var(--danger-br);color:var(--danger)}
-
-.result-box{display:none;margin-top:12px;padding:14px;border-radius:8px;font-size:13px;line-height:1.6}
-.result-box.show{display:block}
-.result-box.approved{background:var(--safe-bg);border:1px solid var(--safe-br);color:var(--safe)}
-.result-box.rejected{background:var(--danger-bg);border:1px solid var(--danger-br);color:var(--danger)}
-.result-box.blocked{background:var(--gold-bg);border:1px solid var(--gold-br);color:var(--gold)}
-
-.explorer-link{color:var(--safe);text-decoration:underline;font-family:var(--mono);font-size:11px;cursor:pointer;display:block;margin-top:6px}
-
-.waiting-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(4px)}
-.waiting-overlay.show{display:flex}
-.waiting-box{background:var(--s1);border:1px solid var(--gold-br);border-radius:16px;padding:40px;text-align:center;max-width:380px;animation:fadeUp 0.3s ease}
-.waiting-spinner{width:44px;height:44px;border:2px solid var(--br2);border-top:2px solid var(--gold);border-radius:50%;margin:0 auto 20px;animation:spin 0.9s linear infinite}
-.waiting-title{font-size:17px;font-weight:600;color:var(--gold);margin-bottom:8px}
-.waiting-sub{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px}
-.waiting-cancel{background:transparent;color:var(--text3);border:1px solid var(--br);padding:8px 20px;border-radius:6px;font-size:12px;cursor:pointer;font-family:var(--sans)}
-.waiting-cancel:hover{color:var(--text);border-color:var(--br2)}
-
-.demo-banner{background:var(--gold-bg);border:1px solid var(--gold-br);border-radius:10px;padding:16px 20px;margin-bottom:28px;display:flex;align-items:flex-start;gap:12px}
-.demo-banner-icon{font-size:18px;flex-shrink:0;margin-top:2px}
-.demo-banner-text{font-size:13px;color:var(--text2);line-height:1.6}
-.demo-banner-text strong{color:var(--gold)}
-
-.proof-card{background:var(--s1);border:1px solid var(--br2);border-radius:12px;padding:28px;grid-column:1/-1}
-.proof-badge{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;color:var(--blue);background:var(--blue-dim);border:1px solid var(--blue-border);padding:3px 10px;border-radius:20px;margin-bottom:14px}
-
-.steps-row{display:flex;gap:0;margin-top:24px;border:1px solid var(--br);border-radius:10px;overflow:hidden}
-.step{flex:1;padding:16px;border-right:1px solid var(--br);text-align:center}
-.step:last-child{border:none}
-.step-num{width:28px;height:28px;border-radius:50%;background:var(--s2);border:1px solid var(--br2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--text3);margin:0 auto 8px}
-.step-text{font-size:11px;color:var(--text3);line-height:1.5}
+.result{display:none;margin-top:12px;padding:14px;border-radius:8px;font-size:13px;line-height:1.6}
+.result.show{display:block}
+.result.ok{background:var(--safe-bg);border:1px solid var(--safe-br);color:var(--safe)}
+.result.bad{background:var(--danger-bg);border:1px solid var(--danger-br);color:var(--danger)}
+.result.blocked{background:var(--gold-bg);border:1px solid var(--gold-br);color:var(--gold)}
+.explorer{color:var(--safe);text-decoration:underline;font-family:'IBM Plex Mono',monospace;font-size:11px;display:block;margin-top:6px}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(4px)}
+.overlay.show{display:flex}
+.obox{background:var(--s1);border:1px solid var(--gold-br);border-radius:16px;padding:40px;text-align:center;max-width:380px}
+.ospinner{width:44px;height:44px;border:2px solid var(--br);border-top:2px solid var(--gold);border-radius:50%;margin:0 auto 20px;animation:spin 0.9s linear infinite}
+.otitle{font-size:17px;font-weight:600;color:var(--gold);margin-bottom:8px}
+.osub{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px}
+.ocancel{background:transparent;color:var(--text3);border:1px solid var(--br);padding:8px 20px;border-radius:6px;font-size:12px;cursor:pointer}
+.note{background:var(--s1);border:1px solid var(--br);border-radius:10px;padding:18px 22px;margin-top:16px;font-size:12px;color:var(--text3);line-height:1.7}
+.note strong{color:var(--text2)}
+.banner{background:var(--gold-bg);border:1px solid var(--gold-br);border-radius:10px;padding:14px 18px;margin-bottom:28px;font-size:13px;color:var(--text2);line-height:1.6}
+.banner strong{color:var(--gold)}
 </style>
 </head>
 <body>
-
 <nav>
   <div class="logo">
-    <div class="logo-icon"><div class="logo-icon-inner"></div></div>
+    <div class="logo-icon"><div class="logo-dot"></div></div>
     <div class="logo-text">AlgoYield<span>.</span></div>
   </div>
   <div class="nav-right">
-    <div class="verity-badge"><div class="verity-dot"></div>PROTECTED BY VERITY</div>
-    <div class="nav-badge">ALGORAND TESTNET</div>
+    <div class="verity-badge"><div class="vdot"></div>PROTECTED BY VERITY</div>
+    <div class="badge">ALGORAND TESTNET</div>
   </div>
 </nav>
-
 <div class="ticker-wrap">
-  <div class="ticker">
-    {Array(8).fill('■ YIELD FARMING  ■ ALGO STAKING  ■ LIQUIDITY POOLS  ■ INSTANT REWARDS  ■ NON-CUSTODIAL  ■ VERITY PROTECTED').join('')}
-    ■ YIELD FARMING  ■ ALGO STAKING  ■ LIQUIDITY POOLS  ■ INSTANT REWARDS  ■ NON-CUSTODIAL  ■ VERITY PROTECTED  ■ YIELD FARMING  ■ ALGO STAKING  ■ LIQUIDITY POOLS  ■ INSTANT REWARDS  ■ NON-CUSTODIAL  ■ VERITY PROTECTED  ■ YIELD FARMING  ■ ALGO STAKING  ■ LIQUIDITY POOLS  ■ INSTANT REWARDS  ■ NON-CUSTODIAL  ■ VERITY PROTECTED  ■ YIELD FARMING  ■ ALGO STAKING  ■ LIQUIDITY POOLS  ■ INSTANT REWARDS  ■ NON-CUSTODIAL  ■ VERITY PROTECTED  ■ YIELD FARMING  ■ ALGO STAKING
-  </div>
+  <div class="ticker">■ YIELD FARMING &nbsp;■ ALGO STAKING &nbsp;■ LIQUIDITY POOLS &nbsp;■ INSTANT REWARDS &nbsp;■ NON-CUSTODIAL &nbsp;■ VERITY PROTECTED &nbsp;■ YIELD FARMING &nbsp;■ ALGO STAKING &nbsp;■ LIQUIDITY POOLS &nbsp;■ INSTANT REWARDS &nbsp;■ NON-CUSTODIAL &nbsp;■ VERITY PROTECTED</div>
 </div>
-
 <div class="hero">
-  <div class="hero-eyebrow"><div class="eyebrow-dot"></div>Algorand DeFi Protocol</div>
   <h1>Earn yield on your<br/><em>ALGO holdings.</em></h1>
-  <p class="subtitle">AlgoYield is a yield farming protocol on Algorand. Stake, earn rewards, and participate in DeFi — all transactions protected by Verity before signing.</p>
-
-  <div class="setup-card">
-    <div class="setup-label">Connect your wallet</div>
-    <div id="walletForm">
-      <input id="walletInput" class="wallet-input" type="text" placeholder="Paste your Algorand testnet address (58 chars)..."/>
+  <p class="subtitle">AlgoYield DeFi protocol on Algorand. Transactions are built by this dApp using algosdk and sent to Verity as raw bytes before reaching your wallet.</p>
+  <div class="setup">
+    <div class="lbl">Connect your wallet</div>
+    <div id="wForm">
+      <input id="wInput" class="addr-input" type="text" placeholder="Paste your Algorand testnet address (58 chars)..."/>
       <button class="btn-connect" onclick="setWallet()">Connect Wallet →</button>
     </div>
-    <div id="walletConnected" style="display:none">
-      <div class="connected-row">
-        <div class="connected-dot"></div>
-        <span class="connected-addr" id="connectedAddr"></span>
+    <div id="wConnected" style="display:none">
+      <div class="connected">
+        <div class="cdot"></div>
+        <span class="caddr" id="wAddr"></span>
       </div>
-      <div style="font-size:12px;color:var(--text3);margin-top:8px;font-family:var(--mono)">Wallet connected — ready to send transactions</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:8px;font-family:'IBM Plex Mono',monospace">Connected — transactions will be intercepted by Verity</div>
     </div>
   </div>
 </div>
-
 <div class="section">
-  <div class="demo-banner">
-    <div class="demo-banner-icon">🛡</div>
-    <div class="demo-banner-text">
-      <strong>DEMO INSTRUCTIONS:</strong> First open <strong>Verity (localhost:5173)</strong> in another tab and connect your Pera wallet there. Then come back here, paste your wallet address, and try the transactions below. Verity will intercept each one in real time before it reaches your wallet.
-    </div>
+  <div class="banner">
+    <strong>HOW THIS WORKS:</strong> Open <strong>Verity (localhost:5173)</strong> in another tab and connect your Pera wallet there first. Then paste your wallet address here. AlgoYield builds real transaction bytes using algosdk and sends them to Verity. Verity decodes bytes it has never seen — AlgoYield built them, not Verity.
   </div>
-
-  <div class="section-header">
-    <div class="section-title">Available Actions</div>
-    <div class="section-count">3 TRANSACTIONS</div>
-  </div>
-
- <div class="txn-grid">
-    <!-- SAFE -->
-    <div class="txn-card safe">
-      <div class="txn-badge safe"><span>✓</span> SAFE TRANSACTION</div>
-      <div class="txn-title">Stake 1 ALGO</div>
-      <div class="txn-desc">Stake into the AlgoYield pool. A normal payment transaction — Verity will simulate it, verify it is safe, then you approve with Pera and it lands on testnet.</div>
-      <div class="txn-details">
-        <div class="txn-row"><span class="dk">Type</span><span class="dv">Payment (0 ALGO to self)</span></div>
-        <div class="txn-row"><span class="dk">Rekey field</span><span class="dv safe">Not present ✓</span></div>
-        <div class="txn-row"><span class="dk">Intent</span><span class="dv">Stake tokens</span></div>
-        <div class="txn-row"><span class="dk">Expected result</span><span class="dv safe">SAFE — sign with Pera</span></div>
+  <div class="grid">
+    <div class="card safe">
+      <div class="cbadge safe">✓ SAFE TRANSACTION</div>
+      <div class="ctitle">Stake 0.001 ALGO</div>
+      <div class="cdesc">A real payment built by AlgoYield and sent to Verity as encoded bytes. Verity decodes and simulates — Verity never built this transaction.</div>
+      <div class="cdetails">
+        <div class="crow"><span class="dk">Type</span><span class="dv">Payment (real bytes)</span></div>
+        <div class="crow"><span class="dk">Amount</span><span class="dv">0.001 ALGO</span></div>
+        <div class="crow"><span class="dk">Built by</span><span class="dv safe">AlgoYield ✓</span></div>
+        <div class="crow"><span class="dk">Expected</span><span class="dv safe">Verity: SAFE</span></div>
       </div>
-      <button class="btn-safe" id="safeBtn" onclick="sendSafe()" disabled>Stake ALGO →</button>
+      <button class="btn-safe" id="safeBtn" onclick="sendSafe()" disabled>Stake 0.001 ALGO →</button>
       <div id="safeStatus" class="status"></div>
-      <div id="safeResult" class="result-box"></div>
+      <div id="safeResult" class="result"></div>
     </div>
-
-    <!-- DANGER -->
-    <div class="txn-card danger">
-      <div class="txn-badge danger"><span>⚠</span> MALICIOUS TRANSACTION</div>
-      <div class="txn-title">Claim 50 ALGO Rewards</div>
-      <div class="txn-desc">Appears to claim staking rewards. Actually contains a hidden rekey attack. The UI says one thing — the transaction does another. This is the intent mismatch Verity is built to catch.</div>
-      <div class="txn-details">
-        <div class="txn-row"><span class="dk">Shown to user</span><span class="dv">Claim rewards</span></div>
-        <div class="txn-row"><span class="dk">Actually executes</span><span class="dv danger">Rekey wallet ⚠</span></div>
-        <div class="txn-row"><span class="dk">Rekey field</span><span class="dv danger">Present — attacker address</span></div>
-        <div class="txn-row"><span class="dk">Expected result</span><span class="dv danger">CRITICAL — blocked</span></div>
+    <div class="card danger">
+      <div class="cbadge danger">⚠ MALICIOUS TRANSACTION</div>
+      <div class="ctitle">Claim 50 ALGO Rewards</div>
+      <div class="cdesc">AlgoYield secretly injects a rekey field into the bytes. Verity receives raw bytes and discovers the attack by decoding — Verity did not build this attack.</div>
+      <div class="cdetails">
+        <div class="crow"><span class="dk">Shown to user</span><span class="dv">Claim rewards</span></div>
+        <div class="crow"><span class="dk">Hidden in bytes</span><span class="dv danger">rekeyTo = attacker ⚠</span></div>
+        <div class="crow"><span class="dk">Built by</span><span class="dv danger">Malicious dApp</span></div>
+        <div class="crow"><span class="dk">Expected</span><span class="dv danger">Verity: BLOCKED</span></div>
       </div>
-      <button class="btn-danger-btn" id="dangerBtn" onclick="sendDanger()" disabled>Claim 50 ALGO Rewards →</button>
+      <button class="btn-danger" id="dangerBtn" onclick="sendDanger()" disabled>Claim 50 ALGO Rewards →</button>
       <div id="dangerStatus" class="status"></div>
-      <div id="dangerResult" class="result-box"></div>
+      <div id="dangerResult" class="result"></div>
     </div>
   </div>
-
-  <!-- TINYMAN REAL TRANSACTION PROOF -->
-  <div class="proof-card" style="margin-bottom:16px">
-    <div class="proof-badge">◎ REAL THIRD-PARTY TRANSACTION — NOT BUILT BY US</div>
-    <div class="txn-title" style="font-size:18px;margin-bottom:8px">Tinyman DEX — Real App Call</div>
-    <div style="font-size:13px;color:var(--text2);line-height:1.75;max-width:720px;margin-bottom:20px">
-      This sends a real Algorand application call to <strong style="color:var(--text)">Tinyman DEX's testnet smart contract</strong> — a protocol we did not build. Verity simulates it exactly the same way. This proves the detection engine works on any Algorand transaction from any source — not just transactions we constructed ourselves.
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px">
-      <div style="background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:14px">
-        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:6px;letter-spacing:0.08em">SOURCE</div>
-        <div style="font-size:13px;font-weight:600;color:var(--text)">Tinyman DEX</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px">Real Algorand protocol</div>
-      </div>
-      <div style="background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:14px">
-        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:6px;letter-spacing:0.08em">APP ID</div>
-        <div style="font-size:13px;font-weight:600;color:var(--text);font-family:var(--mono)">148607000</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px">Tinyman testnet contract</div>
-      </div>
-      <div style="background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:14px">
-        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:6px;letter-spacing:0.08em">EXPECTED RESULT</div>
-        <div style="font-size:13px;font-weight:600;color:var(--safe)">SAFE ✓</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px">No rekey or attack fields</div>
-      </div>
-    </div>
-    <button class="btn-safe" id="realBtn" onclick="sendReal()" disabled style="max-width:320px">
-      Simulate Real Tinyman Transaction →
-    </button>
-    <div id="realStatus" class="status"></div>
-    <div id="realResult" class="result-box"></div>
-  </div>
-
-  <!-- PROOF CARD -->
-  <div class="proof-card">
-    <div class="proof-badge">◎ PROOF OF CONCEPT</div>
-    <div class="txn-title" style="font-size:17px;margin-bottom:8px">Why this proves Verity works on any transaction</div>
-    <div style="font-size:13px;color:var(--text2);line-height:1.75;max-width:680px">
-      Verity does not pattern-match specific transactions. It checks mathematically defined fields in the Algorand protocol specification. A rekey field in ANY transaction from ANY dApp — whether built by us or not — will always be caught. The detection is cryptographically deterministic.
-    </div>
-    <div class="steps-row">
-      <div class="step"><div class="step-num">1</div><div class="step-text">dApp builds transaction and sends to Verity via BroadcastChannel</div></div>
-      <div class="step"><div class="step-num">2</div><div class="step-text">Verity calls Algorand Simulate API with the real transaction bytes</div></div>
-      <div class="step"><div class="step-num">3</div><div class="step-text">Detection engine checks for rekey, inner drains, clawback fields</div></div>
-      <div class="step"><div class="step-num">4</div><div class="step-text">If safe: Pera signs and transaction lands on testnet explorer</div></div>
-    </div>
+  <div class="note">
+    <strong>Technical proof:</strong> Both transactions are built by algosdk running in this browser tab. Verity calls <code style="color:var(--gold);font-family:'IBM Plex Mono',monospace">algosdk.decodeUnsignedTransaction()</code> on bytes it received — it never called any make* function. The rekey field is discovered by Verity only after decoding.
   </div>
 </div>
-
-<div class="waiting-overlay" id="waitingOverlay">
-  <div class="waiting-box">
-    <div class="waiting-spinner"></div>
-    <div class="waiting-title">Waiting for Verity</div>
-    <div class="waiting-sub" id="waitingSub">Transaction sent to Verity for analysis. Switch to the Verity tab.</div>
-    <button class="waiting-cancel" onclick="cancelWaiting()">Cancel</button>
+<div class="overlay" id="overlay">
+  <div class="obox">
+    <div class="ospinner"></div>
+    <div class="otitle">Waiting for Verity</div>
+    <div class="osub" id="osub">Transaction sent to Verity for analysis.</div>
+    <button class="ocancel" onclick="cancelWait()">Cancel</button>
   </div>
 </div>
-
 <script>
 let userWallet = ''
 let pendingType = null
 let bc = new BroadcastChannel('verity-interceptor')
-let responseTimeout = null
+let timer = null
 
 bc.onmessage = (e) => {
   if (e.data.type !== 'TXN_RESPONSE') return
   const { approved, txId } = e.data.payload
-  clearTimeout(responseTimeout)
-  hideWaiting()
-
+  clearTimeout(timer)
+  hideOverlay()
   if (pendingType === 'safe') {
     const el = document.getElementById('safeResult')
     if (approved) {
-      el.className = 'result-box show approved'
-      el.innerHTML = `✓ Transaction approved and signed by Pera wallet!${txId ? `<a class="explorer-link" href="https://testnet.algoexplorer.io/tx/${txId}" target="_blank">View on Algorand Testnet Explorer →</a>` : ''}`
+      el.className = 'result show ok'
+      el.innerHTML = '✓ Transaction approved and confirmed on testnet!' + (txId ? '<a class="explorer" href="https://lora.algokit.io/testnet/transaction/' + txId + '" target="_blank">' + txId.slice(0,20) + '... →</a>' : '')
     } else {
-      el.className = 'result-box show rejected'
+      el.className = 'result show bad'
       el.textContent = '✗ Transaction rejected by user'
     }
     document.getElementById('safeStatus').className = 'status'
   }
-
   if (pendingType === 'danger') {
     const el = document.getElementById('dangerResult')
-    if (!approved) {
-      el.className = 'result-box show blocked'
-      el.textContent = '✓ Rekey attack blocked by Verity. Wallet protected. Nothing was sent to your Pera wallet.'
-    } else {
-      el.className = 'result-box show rejected'
-      el.textContent = '⚠ User approved despite Verity warning.'
-    }
+    el.className = 'result show blocked'
+    el.textContent = approved ? '⚠ User approved despite Verity warning.' : '✓ Rekey attack blocked by Verity. AlgoYield built the attack — Verity caught it by decoding the bytes.'
     document.getElementById('dangerStatus').className = 'status'
   }
-
-  if (pendingType === 'real') {
-  const el = document.getElementById('realResult')
-  if (approved) {
-    el.className = 'result-box show approved'
-    el.innerHTML = `✓ Tinyman transaction verified safe by Verity!<br><span style="font-size:12px;opacity:0.8">Verity correctly identified this real third-party transaction as safe — proving the detector works on any Algorand transaction.</span>`
-  } else {
-    el.className = 'result-box show rejected'
-    el.textContent = '✗ Transaction rejected by user'
-  }
-  document.getElementById('realStatus').className = 'status'
-}
-pendingType = null
-
+  pendingType = null
 }
 
 function setWallet() {
-  const val = document.getElementById('walletInput').value.trim()
-  if (!val || val.length < 58) { alert('Please enter a valid Algorand address (58 characters)'); return }
-  userWallet = val
-  document.getElementById('walletForm').style.display = 'none'
-  document.getElementById('walletConnected').style.display = 'block'
-  document.getElementById('connectedAddr').textContent = val.slice(0,8) + '...' + val.slice(-6)
+  const v = document.getElementById('wInput').value.trim()
+  if (!v || v.length < 58) { alert('Please enter a valid 58-character Algorand address'); return }
+  userWallet = v
+  document.getElementById('wForm').style.display = 'none'
+  document.getElementById('wConnected').style.display = 'block'
+  document.getElementById('wAddr').textContent = v.slice(0,8) + '...' + v.slice(-6)
   document.getElementById('safeBtn').disabled = false
   document.getElementById('dangerBtn').disabled = false
-  document.getElementById('realBtn').disabled = false
 }
 
-function sendSafe() {
+async function fetchParams() {
+  const r = await fetch('https://testnet-api.algonode.cloud/v2/transactions/params')
+  if (!r.ok) throw new Error('Failed to fetch params: ' + r.status)
+  const d = await r.json()
+  console.log('Params response:', d)
+  // Handle both old and new algosdk param formats
+  return {
+    flatFee: true,
+    fee: 1000,
+    firstRound: d['last-round'] || d['lastRound'] || d['firstRound'] || 1,
+    lastRound: (d['last-round'] || d['lastRound'] || 1) + 1000,
+    genesisHash: d['genesis-hash'] || d['genesisHash'] || d['genesishashb64'],
+    genesisID: d['genesis-id'] || d['genesisID'],
+  }
+}
+
+function b64(bytes) {
+  let s = ''
+  for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i])
+  return btoa(s)
+}
+
+async function sendSafe() {
   if (!userWallet) return
-  document.getElementById('safeResult').className = 'result-box'
+  document.getElementById('safeResult').className = 'result'
+  showStatus('safeStatus', 'Building real payment with algosdk...', 'info')
   pendingType = 'safe'
-  const payload = {
-    id: 'txn-' + Date.now(), dapp: 'AlgoYield', type: 'payment',
-    from: userWallet, to: userWallet, amount: 1000000,
-    note: 'AlgoYield: Stake 1 ALGO', description: 'Stake 1 ALGO into AlgoYield pool',
-    intent: 'stake', timestamp: Date.now()
-  }
-  bc.postMessage({ type: 'TXN_REQUEST', payload })
-  showStatus('safeStatus', 'Sent to Verity — switch to the Verity tab to analyze.', 'info')
-  showWaiting('Safe payment transaction sent to Verity. Switch to the Verity tab to see the simulation and approve with Pera.')
-  responseTimeout = setTimeout(() => { hideWaiting(); showStatus('safeStatus', 'No response — is Verity open in another tab?', 'error'); pendingType = null }, 90000)
-}
-
-function sendDanger() {
-  if (!userWallet) return
-  document.getElementById('dangerResult').className = 'result-box'
-  pendingType = 'danger'
-  const payload = {
-    id: 'txn-' + Date.now(), dapp: 'AlgoYield', type: 'rekey',
-    from: userWallet, to: userWallet, amount: 0,
-    rekeyTo: 'HZ57J3K46JIJXILONBBZOHX6BKPXEM2VVXNRFSUED6MBAF45OLEGN6ZHEY',
-    note: 'AlgoYield: Claim rewards', description: 'Claim 50 ALGO staking rewards',
-    intent: 'claim', timestamp: Date.now()
-  }
-  bc.postMessage({ type: 'TXN_REQUEST', payload })
-  showStatus('dangerStatus', 'Sent to Verity — switch to the Verity tab.', 'info')
-  showWaiting('Malicious transaction sent to Verity. Watch it catch the rekey attack in real time.')
-  responseTimeout = setTimeout(() => { hideWaiting(); showStatus('dangerStatus', 'No response — is Verity open in another tab?', 'error'); pendingType = null }, 90000)
-}
-
-function sendReal() {
-  if (!userWallet) return
-  document.getElementById('realResult').className = 'result-box'
-  pendingType = 'real'
-  const payload = {
-    id: 'txn-' + Date.now(),
-    dapp: 'Tinyman DEX',
-    type: 'appcall',
-    from: userWallet,
-    to: userWallet,
-    amount: 0,
-    note: 'Tinyman: swap',
-    description: 'Token swap on Tinyman DEX (real testnet protocol)',
-    intent: 'swap',
-    timestamp: Date.now()
-  }
-  bc.postMessage({ type: 'TXN_REQUEST', payload })
-  showStatus('realStatus', 'Real Tinyman transaction sent to Verity — switch tabs.', 'info')
-  showWaiting('Real Tinyman DEX transaction intercepted. Verity will simulate this real protocol transaction and show you it\'s safe.')
-  responseTimeout = setTimeout(() => {
-    hideWaiting()
-    showStatus('realStatus', 'No response — is Verity open in another tab?', 'error')
+  try {
+    const params = await fetchParams()
+    console.log('Using params:', params)
+    // Real payment to a second address — not a self-payment
+    const POOL = userWallet
+    const txn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+      from: userWallet,
+      to: POOL,
+      amount: 1000,
+      suggestedParams: params,
+      note: new TextEncoder().encode('AlgoYield: Stake 0.001 ALGO'),
+    })
+    console.log('Built txn:', txn)
+    const encoded = algosdk.encodeUnsignedTransaction(txn)
+    const txnBase64 = b64(encoded)
+    console.log('AlgoYield: safe txn encoded', encoded.length, 'bytes, sending to Verity')
+    bc.postMessage({ type: 'TXN_REQUEST', payload: {
+      id: 'txn-' + Date.now(), dapp: 'AlgoYield', txnBase64,
+      type: 'payment', from: userWallet, to: POOL, amount: 1000,
+      description: 'Stake 0.001 ALGO into AlgoYield pool', intent: 'stake', timestamp: Date.now()
+    }})
+    showStatus('safeStatus', 'Bytes sent to Verity — switch to Verity tab now.', 'info')
+    showOverlay('AlgoYield built this transaction and sent encoded bytes to Verity. Switch to the Verity tab to analyze and approve with Pera.')
+    timer = setTimeout(() => { hideOverlay(); showStatus('safeStatus', 'No response — is Verity open in another tab?', 'error'); pendingType = null }, 120000)
+  } catch(err) {
+    console.error('Safe txn error:', err)
+    showStatus('safeStatus', 'Error: ' + err.message, 'error')
     pendingType = null
-  }, 90000)
+  }
+}
+
+async function sendDanger() {
+  if (!userWallet) return
+  document.getElementById('dangerResult').className = 'result'
+  showStatus('dangerStatus', 'Building malicious transaction with hidden rekey...', 'info')
+  pendingType = 'danger'
+  try {
+    const params = await fetchParams()
+    // Generate fresh random attacker address — valid checksum guaranteed
+    const attacker = algosdk.generateAccount()
+const ATTACKER = attacker.addr.toString()
+console.log('Hidden rekeyTo:', ATTACKER)
+const txn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+  from: userWallet,
+  to: userWallet,
+  amount: 0,
+  suggestedParams: params,
+  rekeyTo: ATTACKER,
+  note: new TextEncoder().encode('AlgoYield: Claim rewards'),
+})
+    const encoded = algosdk.encodeUnsignedTransaction(txn)
+    const txnBase64 = b64(encoded)
+    console.log('AlgoYield: malicious txn encoded', encoded.length, 'bytes, sending to Verity')
+    bc.postMessage({ type: 'TXN_REQUEST', payload: {
+      id: 'txn-' + Date.now(), dapp: 'AlgoYield', txnBase64,
+      type: 'payment', from: userWallet, to: userWallet, amount: 0,
+      description: 'Claim 50 ALGO staking rewards', intent: 'claim', timestamp: Date.now()
+    }})
+    showStatus('dangerStatus', 'Malicious bytes sent — switch to Verity tab.', 'info')
+    showOverlay('AlgoYield built this attack and hid the rekey field in encoded bytes. Verity will decode and discover it on its own.')
+    timer = setTimeout(() => { hideOverlay(); showStatus('dangerStatus', 'No response — is Verity open?', 'error'); pendingType = null }, 120000)
+  } catch(err) {
+    console.error('Danger txn error:', err)
+    showStatus('dangerStatus', 'Error: ' + err.message, 'error')
+    pendingType = null
+  }
 }
 
 function showStatus(id, msg, type) {
   const el = document.getElementById(id)
-  el.textContent = msg; el.className = `status show ${type}`
+  el.textContent = msg; el.className = 'status show ' + type
 }
-function showWaiting(msg) {
-  document.getElementById('waitingSub').textContent = msg
-  document.getElementById('waitingOverlay').classList.add('show')
+function showOverlay(msg) {
+  document.getElementById('osub').textContent = msg
+  document.getElementById('overlay').classList.add('show')
 }
-function hideWaiting() { document.getElementById('waitingOverlay').classList.remove('show') }
-function cancelWaiting() {
-  clearTimeout(responseTimeout); hideWaiting(); pendingType = null
-  bc.postMessage({ type: 'TXN_CANCEL', payload: {} })
-}
+function hideOverlay() { document.getElementById('overlay').classList.remove('show') }
+function cancelWait() { clearTimeout(timer); hideOverlay(); pendingType = null }
 </script>
 </body>
 </html>
