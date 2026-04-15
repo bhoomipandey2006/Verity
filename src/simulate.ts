@@ -65,10 +65,10 @@ export async function simulateTransaction(txn: algosdk.Transaction): Promise<Sim
     // ── 5. Belt-and-suspenders: also check simulate response for rekey ──
     try {
       const txnData = response?.txnGroups?.[0]?.txnResults?.[0]?.txnResult?.txn?.txn
-      if (txnData?.rekey) {
-        result.rekeyDetected = true
-        try { result.rekeyTo = algosdk.encodeAddress(txnData.rekey) } catch { result.rekeyTo = 'Unknown' }
-      }
+      if (txnData?.rekeyTo) {
+  result.rekeyDetected = true
+  try { result.rekeyTo = algosdk.encodeAddress(txnData.rekeyTo) } catch (_) { result.rekeyTo = undefined }
+}
     } catch (_) {}
 
     // ── 6. Count inner transactions ──

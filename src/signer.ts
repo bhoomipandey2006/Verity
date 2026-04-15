@@ -12,7 +12,8 @@ export async function signAndSubmit(
   const txn = algosdk.decodeUnsignedTransaction(txnBytes)
 
   const signedTxns = await peraWallet.signTransaction([[{ txn }]])
-  const { txId } = await algodClient.sendRawTransaction(signedTxns[0]).do()
+  const result = await algodClient.sendRawTransaction(signedTxns[0]).do()
+const txId = (result as any).txid || (result as any).txId || ''
   
   await algosdk.waitForConfirmation(algodClient, txId, 4)
   return txId
