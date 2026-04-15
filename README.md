@@ -35,7 +35,7 @@ India's DPDP Act mandates that user consent must be informed and specific. At th
 
 🔗 **[Live Deployment](https://verity-beta-drab.vercel.app/)**
 
-📹 **[Demo Video](YOUR_VIDEO_LINK)**
+📹 **[Demo Video](https://youtu.be/W_aF_zZjSvc?si=2u_Df9Xdc23ZT_xl)**
 
 ---
 
