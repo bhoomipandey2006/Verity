@@ -5,7 +5,7 @@
 [![AlgoBharat HackSeries 3.0](https://img.shields.io/badge/AlgoBharat-HackSeries%203.0-gold)](https://dorahacks.io/hackathon/hack-series-3)
 [![Built on Algorand](https://img.shields.io/badge/Built%20on-Algorand-blue)](https://algorand.com)
 [![AlgoKit](https://img.shields.io/badge/AlgoKit-2.10-green)](https://github.com/algorandfoundation/algokit-cli)
-[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://verity.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://verity-beta-drab.vercel.app/)
 
 ---
 
@@ -33,7 +33,7 @@ India's DPDP Act mandates that user consent must be informed and specific. At th
 
 ## Live Demo
 
-🔗 **[Live Deployment](https://verity.vercel.app)**
+🔗 **[Live Deployment](https://verity-beta-drab.vercel.app/)**
 
 📹 **[Demo Video](YOUR_VIDEO_LINK)**
 
@@ -107,7 +107,7 @@ This is the infrastructure that makes Verity possible. No other user-facing prod
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOURUSERNAME/verity.git
+git clone https://github.com/bhoomipandey2006/Verity
 cd verity/projects/Verity
 
 # Install dependencies
@@ -179,6 +179,6 @@ AlgoBharat HackSeries 3.0 — Round 2
 
 ## Submission Links
 
-- 🌐 [Live Demo](https://verity.vercel.app)
-- 📹 [Demo Video](YOUR_VIDEO_LINK)
+- 🌐 [Live Demo](https://verity-beta-drab.vercel.app/)
+- 📹 [Demo Video](https://youtu.be/W_aF_zZjSvc?si=2u_Df9Xdc23ZT_xl)
 - 📋 [DoraHacks](https://dorahacks.io/hackathon/hack-series-3)
